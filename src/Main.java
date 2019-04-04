@@ -1,15 +1,94 @@
+import java.util.Arrays;
 import java.util.Random;
 
 public class Main {
+    static int numSwaps = 0;
+    static int numComps = 0;
     int size;
     public static void main(String[] args){
-        int Array[]={8,12,7,19,30,5,48,3,36,17,25,98,56,12,23,27,88,96};
-        DualPQuickSort(Array,0, Array.length-1);
+        int Array[]={8,12,7,19,30,5,48,3,36,35,17,25,98,56,12,23,27,88,96};
+        //DualPQuickSort(Array,0, Array.length-1);
+        medianQuickSort(Array,0,Array.length-1);
 
         for (int aHeap : Array) System.out.print(aHeap + " ");
     }
+    //-----------------------------------Mid of First Mid Last https://gist.github.com/epomp447/4c0d0676d9f013788647cbe6e60ae0df
+
+    public static int partition(int arr[], int low, int high) {
+        int pivot = arr[high];
+        int i = (low - 1); // index of smaller element
+
+        for (int j = low; j < high; j++) {
+            // If current element is smaller than or
+            // equal to pivot
+            if (arr[j] <= pivot) {
+                i++;
+
+                // swap arr[i] and arr[j]
+                exChange(arr,i,j);
+                numSwaps++;
+            }
+            numComps++;
+        }
+
+        // swap arr[i+1] and arr[high] (or pivot)
+        exChange(arr,i+1,high);
+        numSwaps++;
+        return i + 1;
+
+    }
+    public static void MMQuickSort(int arr[], int low, int high) {
+
+        if (low < high) {
+            int pi = partition(arr, low, high);
+
+            // Recursively sort elements before
+            // partition and after partition
+            MMQuickSort(arr, low, pi - 1);
+            MMQuickSort(arr, pi + 1, high);
+        }
+    }
+    /*  method for medianQuicksort */
+    public static void medianQuickSort(int arr[], int low, int high) {
+        if (low >= high)
+            return;
+
+        if (low < high) {
+
+            int pi = medianPivot(arr, low, high);
+
+            MMQuickSort(arr, low, high);
+
+        }
+    }
+    public static int medianPivot(int arr[], int low, int high) {
+        int first = arr[low];
+        int last = arr[arr.length - 1];
+        int mid = (high) / 2;
+
+        System.out.println("\tMiddle of Arr at Index= " + mid + " : " + arr[mid]);
+        int[] sortingArr = { arr[low], arr[mid], arr[high] };
+
+        Arrays.sort(sortingArr);
+
+        int middleValue = sortingArr[1];
+        // swap with the last to serve as pivot
+        int temp = arr[high];
+        arr[high] = middleValue;
+        if (middleValue == arr[low]) {
+            arr[low] = temp;
+        } else if (middleValue == arr[mid]) {
+            arr[mid] = temp;
+        }
+
+        // System.out.println("median: ");
+        return partition(arr, low, high);
+
+    }
+    //-----------------------------------Mid of First Mid Last End
+
     //--------------------------------Dual Pivot
-    static void DualPQuickSort(int Array[], int beg, int end)
+    static void DualPQuickSort(int Array[], int beg, int end)//https://www.geeksforgeeks.org/dual-pivot-quicksort/
     {
         if (beg < end) {
             // lp means left pivot, and rp means right pivot.
@@ -96,7 +175,8 @@ public class Main {
 
     //--------------------------------Random Pivot
 
-    static int Rpartition(int Array[],int beg, int end){
+    static int Rpartition(int Array[],int beg, int end)//https://gist.github.com/aaani/6337280
+    {
         int random=beg + ((int)Math.random()*(Array.length))/(end-beg+1);
         //New position of pivot element
         int last=end;
@@ -176,6 +256,3 @@ public class Main {
 
 }
 
-
-
-/**/
