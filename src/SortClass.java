@@ -15,7 +15,7 @@ public class SortClass {
             case "FirstElement": quickSortBegin(Array,0,Array.length-1); break;
             case "RandomElement": RQuickSort(Array,0,Array.length-1); break;
             case "MidOfFirstMidOfLastElement": quickSortMed(Array,0,Array.length); break;
-            case "DualPivot": DualPQuickSort(Array,0,Array.length-1); break;
+            case "DualPivot": DualQuickSort(Array,0,Array.length); break;
             case "IntroSort": Sort(Array); break;
             default: System.out.println("Invalid Type Input");
         }
@@ -130,65 +130,46 @@ public class SortClass {
         } else
             return z;
     }
-            //--------------------------------Dual Pivot https://github.com/uyen-carolyn/CS-146/blob/master/SortingAlgorithms/QuicksortDualPivots.java
-    private static void  DualPQuickSort(int[] Array, int p, int r) {
-        if (p < r) {
-            int lp = partition(Array, p, r, p);		// left pivot
-            int rp = partition(Array, p, r, lp); 	// right pivot
 
-            DualPQuickSort(Array, p, lp - 1); 				// recursively sorts the left,
-            DualPQuickSort(Array, lp + 1, rp - 1); 			// middle, and right sub-arrays
-            DualPQuickSort(Array, rp + 1, r); 				// created for algorithm
-        }
-    }
-    private static int partition(int[] Array, int p, int r, int lp) {
-        if (Array[p] > Array[r]) {
-            exChange(Array,p,r);
-
-        }
-        int j = p + 1;
-        int g = r - 1;
-        int k = p + 1;
-        int h = Array[p];		// left pivot
-        int i = Array[r]; 		// right pivot
-
-        while (k <= g) {
-
-            // checks if element at k is less than the left pivot
-            if (Array[k] < h) {
-                exChange(Array,k,j);
-                j++;
+    //--------------------------------Dual Pivot https://gist.github.com/JayXon/9949096
+    private static void DualQuickSort(int Array[], int beg, int end) {
+        if (end-beg < 3 ){
+            if (end != beg && Array[beg] > Array[end-1]) {
+                exChange(Array,beg,end-1);
             }
-
-            // checks if element at k is greater than or equal to the right pivot
-            else if (Array[k] >= i) {
-                while (Array[g] > i && k < g)
-                    g--;
-                exChange(Array,k,g);
-                g--;
-                if (Array[k] < h) {
-                    exChange(Array,k,j);
-                    j++;
-                }
-            }
-            k++;
+            return;
         }
-        j--;
-        g++;
+        int p1=Array[beg];
+        int p2=Array[end-1];
 
-        // puts pivots into their position in the array
+        if(p1 > p2 ){
+            int temp=p1;
+            p1=p2;
+            p2=temp;
+            Array[beg]=p1;
+            Array[end-1]=p2;
+        }
+        int a=beg;
+        int b=end-1;
+        for (int i =beg + 1; i < b; i++) {
+            if (Array[i] < p1) {
+                a++;
+                exChange(Array,i,a);
+                i++;
+            } else if( Array[i] > p2 ){
+                b--;
+                exChange(Array,b,i);
 
-        // left pivot
-       exChange(Array,p,j);
-        // right pivot
-        exChange(Array,r,g);
-
-        // return indices of pivots
-        lp = j; // resets left pivot (cannot return two elements for this method)
-
-        return g;
+            } else {
+                i++;
+            }
+        }
+        exChange(Array,beg,a);
+        exChange(Array,b,end-1);
+        DualQuickSort(Array,beg,a);
+        DualQuickSort(Array,a+1,b);
+        DualQuickSort(Array,b+1,end);
     }
-
     //---------------------------------Last Pivot
     private static int LPartiton(int Array[],int beg, int end){
         int pivot=Array[end];
@@ -211,9 +192,9 @@ public class SortClass {
         }
     }
 
-    //--------------------------------Random Pivot
+    //--------------------------------Random Pivot https://gist.github.com/aaani/6337280
 
-    private static int Rpartition(int Array[],int beg, int end)//https://gist.github.com/aaani/6337280
+    private static int Rpartition(int Array[],int beg, int end)
     {
         int random=beg + ((int)Math.random()*(Array.length))/(end-beg+1);
         //New position of pivot element
@@ -246,7 +227,7 @@ public class SortClass {
         RQuickSort(Array, pivot+1, end);
     }
 
-    //-------------------------------------------------Heap SortClass
+    //-------------------------------------------------Heap Sort https://gist.github.com/dmnugent80/2149f7e8f62f8eede4f1
     private static void maxHeapify (int[] Array, int size, int index) {
 
         int left = leftChild(index);
